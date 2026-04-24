@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS Grid — Guía Visual Interactiva</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0f0f13;
+    --surface: #1a1a22;
+    --surface2: #22222e;
+    --border: #2e2e3e;
+    --text: #e8e8f0;
+    --muted: #7878a0;
+    --accent: #7c6af7;
+    --accent2: #4ecdc4;
+    --coral: #f7906a;
+    --pink: #ff6b9d;
+    --yellow: #ffd93d;
+    --green: #6bcb77;
+    --red: #ff6b6b;
+    --blue: #4d96ff;
+  }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .page { max-width: 920px; margin: 0 auto; }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: .3rem;
+    background: linear-gradient(135deg, var(--accent2), var(--coral));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .subtitle { color: var(--muted); font-size: .9rem; margin-bottom: 2rem; }
+
+  .tabs {
+    display: flex;
+    gap: .4rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: .5rem;
+    flex-wrap: wrap;
+  }
+
+  .tab {
+    padding: .45rem 1rem;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    font-size: .85rem;
+    font-weight: 500;
+    color: var(--muted);
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: none;
+    transition: all .2s;
+  }
+
+  .tab.active { color: var(--text); background: var(--surface); border-color: var(--border); }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .section-title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+
+  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  .code-block {
+    background: rgba(0,0,0,.5);
+    border-radius: 8px;
+    padding: .85rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    line-height: 1.8;
+    color: var(--text);
+    overflow-x: auto;
+  }
+
+  .cp { color: #7ec8e3; }
+  .cv { color: var(--yellow); }
+  .cc { color: var(--muted); }
+  .cs { color: var(--green); }
+
+  .tag {
+    display: inline-block;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .45rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--accent2);
+  }
+
+  /* ── CONCEPT GRID ── */
+  .concept-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  @media(max-width:600px){ .concept-row { grid-template-columns: 1fr; } }
+
+  .concept-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    transition: border-color .2s, transform .2s;
+  }
+
+  .concept-box:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .concept-box h4 { font-size: .82rem; margin-bottom: .35rem; }
+  .concept-box p { font-size: .75rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── GRID DEMO ── */
+  .demo-grid {
+    display: grid;
+    width: 100%;
+    min-height: 160px;
+    border: 2px dashed rgba(78,205,196,.4);
+    border-radius: 8px;
+    padding: .5rem;
+    transition: all .35s;
+    gap: 8px;
+  }
+
+  .demo-cell {
+    background: rgba(124,106,247,.2);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--accent);
+    min-height: 44px;
+    transition: all .35s;
+  }
+
+  .demo-cell:nth-child(2) { border-color: var(--accent2); color: var(--accent2); background: rgba(78,205,196,.15); }
+  .demo-cell:nth-child(3) { border-color: var(--coral); color: var(--coral); background: rgba(247,144,106,.15); }
+  .demo-cell:nth-child(4) { border-color: var(--pink); color: var(--pink); background: rgba(255,107,157,.15); }
+  .demo-cell:nth-child(5) { border-color: var(--yellow); color: var(--yellow); background: rgba(255,217,61,.1); }
+  .demo-cell:nth-child(6) { border-color: var(--green); color: var(--green); background: rgba(107,203,119,.15); }
+
+  .controls-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: .85rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .ctrl label {
+    display: block;
+    font-size: .72rem;
+    color: var(--muted);
+    margin-bottom: .35rem;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+  }
+
+  .ctrl select, .ctrl input {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    padding: .45rem .75rem;
+    font-size: .82rem;
+    font-family: 'Space Grotesk', sans-serif;
+    cursor: pointer;
+    outline: none;
+    transition: border-color .2s;
+  }
+
+  .ctrl select:focus, .ctrl input:focus { border-color: var(--accent2); }
+
+  .css-output {
+    background: rgba(0,0,0,.4);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .76rem;
+    line-height: 1.75;
+    margin-top: .85rem;
+  }
+
+  /* ── FR VISUAL ── */
+  .fr-demo {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+    margin-top: .5rem;
+  }
+
+  .fr-row { display: flex; flex-direction: column; gap: .3rem; }
+
+  .fr-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--muted);
+  }
+
+  .fr-bar {
+    display: grid;
+    height: 40px;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    gap: 2px;
+    background: var(--border);
+  }
+
+  .fr-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    font-weight: 600;
+  }
+
+  /* ── AREAS DEMO ── */
+  .areas-wrap {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media(max-width:600px){ .areas-wrap { grid-template-columns: 1fr; } }
+
+  .areas-visual {
+    display: grid;
+    grid-template-areas:
+      "header header"
+      "sidebar contenido"
+      "footer footer";
+    grid-template-columns: 120px 1fr;
+    grid-template-rows: 44px 100px 36px;
+    gap: 6px;
+  }
+
+  .area-cell {
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    font-weight: 600;
+  }
+
+  .a-header   { grid-area: header;    background: rgba(124,106,247,.25); border: 2px solid var(--accent); color: var(--accent); }
+  .a-sidebar  { grid-area: sidebar;   background: rgba(78,205,196,.2);  border: 2px solid var(--accent2); color: var(--accent2); }
+  .a-content  { grid-area: contenido; background: rgba(247,144,106,.2); border: 2px solid var(--coral); color: var(--coral); }
+  .a-footer   { grid-area: footer;    background: rgba(107,203,119,.2); border: 2px solid var(--green); color: var(--green); }
+
+  /* ── VS FLEXBOX ── */
+  .vs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  @media(max-width:560px){ .vs-grid { grid-template-columns: 1fr; } }
+
+  .vs-card {
+    background: var(--surface2);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .vs-card h4 {
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: .75rem;
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .vs-item {
+    display: flex;
+    align-items: flex-start;
+    gap: .5rem;
+    margin-bottom: .5rem;
+    font-size: .77rem;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+
+  .vs-icon { font-size: .7rem; flex-shrink: 0; margin-top: 1px; }
+
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(124,106,247,.08), rgba(78,205,196,.08));
+    border: 1px solid rgba(124,106,247,.25);
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+  }
+
+  .highlight-box h4 { font-size: .85rem; color: var(--accent2); margin-bottom: .5rem; }
+  .highlight-box p { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+  .highlight-box strong { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <h1>CSS Grid — Guía Visual</h1>
+  <p class="subtitle">El sistema de layout en dos dimensiones · con demo interactiva</p>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('conceptos',this)">Conceptos base</button>
+    <button class="tab" onclick="switchTab('demo',this)">Demo interactiva</button>
+    <button class="tab" onclick="switchTab('fr',this)">Unidad fr</button>
+    <button class="tab" onclick="switchTab('areas',this)">Grid areas</button>
+    <button class="tab" onclick="switchTab('vs',this)">Grid vs Flexbox</button>
+  </div>
+
+  <!-- ══ CONCEPTOS ══ -->
+  <div id="conceptos" class="panel active">
+
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--accent2)"></span>
+        ¿Qué es CSS Grid?
+      </div>
+      <p style="font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:1rem">
+        Grid convierte un contenedor en una <strong style="color:var(--text)">cuadrícula de filas y columnas</strong>. Los hijos se colocan dentro de esa cuadrícula. A diferencia de Flexbox (que trabaja en una sola dirección), Grid controla <strong style="color:var(--text)">dos dimensiones a la vez</strong>.
+      </p>
+
+      <div class="code-block">
+        .<span class="cp">contenedor</span> {<br>
+        &nbsp;&nbsp;<span class="cp">display</span>: <span class="cv">grid</span>;<br>
+        &nbsp;&nbsp;<span class="cp">grid-template-columns</span>: <span class="cv">200px 200px 200px</span>; <span class="cc">/* 3 columnas de 200px */</span><br>
+        &nbsp;&nbsp;<span class="cp">gap</span>: <span class="cv">16px</span>; <span class="cc">/* espacio entre celdas */</span><br>
+        }
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--coral)"></span>
+        Propiedades esenciales
+      </div>
+
+      <div class="concept-row">
+        <div class="concept-box">
+          <h4 style="color:var(--accent2)"><span class="tag">display: grid</span></h4>
+          <p>Activa Grid en el contenedor. Los hijos directos se convierten en grid items automáticamente.</p>
+        </div>
+        <div class="concept-box">
+          <h4 style="color:var(--coral)"><span class="tag">grid-template-columns</span></h4>
+          <p>Define cuántas columnas hay y su tamaño. Cada valor es una columna: <code style="color:var(--yellow);font-size:.72rem">1fr 1fr 1fr</code> = tres columnas iguales.</p>
+        </div>
+        <div class="concept-box">
+          <h4 style="color:var(--pink)"><span class="tag">grid-template-rows</span></h4>
+          <p>Define el alto de las filas. Si no lo defines, las filas se adaptan al contenido automáticamente.</p>
+        </div>
+        <div class="concept-box">
+          <h4 style="color:var(--yellow)"><span class="tag">gap</span></h4>
+          <p>Espacio entre todas las celdas. <code style="color:var(--yellow);font-size:.72rem">gap: 16px</code> aplica igual en horizontal y vertical. <code style="color:var(--yellow);font-size:.72rem">gap: 24px 12px</code> para controlar por separado.</p>
+        </div>
+        <div class="concept-box">
+          <h4 style="color:var(--green)"><span class="tag">repeat()</span></h4>
+          <p><code style="color:var(--yellow);font-size:.72rem">repeat(3, 1fr)</code> es igual que <code style="color:var(--yellow);font-size:.72rem">1fr 1fr 1fr</code>. Evita repetir valores y hace el código más limpio.</p>
+        </div>
+        <div class="concept-box">
+          <h4 style="color:var(--accent)"><span class="tag">grid-area</span></h4>
+          <p>Asigna un nombre a un elemento para posicionarlo en un área nombrada del grid. Se usa junto con <code style="color:var(--yellow);font-size:.72rem">grid-template-areas</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--green)"></span>
+        Cómo se colocan los items automáticamente
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:1rem">
+        Por defecto los items se colocan de <strong style="color:var(--text)">izquierda a derecha</strong>, saltando a la siguiente fila cuando se llenan las columnas. No tienes que hacer nada especial — Grid lo gestiona solo.
+      </p>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:.5rem;background:var(--surface2);border-radius:8px;border:1px dashed rgba(78,205,196,.3)">
+        <div style="background:rgba(124,106,247,.2);border:2px solid var(--accent);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent)">1</div>
+        <div style="background:rgba(78,205,196,.15);border:2px solid var(--accent2);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--accent2)">2</div>
+        <div style="background:rgba(247,144,106,.15);border:2px solid var(--coral);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--coral)">3</div>
+        <div style="background:rgba(255,107,157,.15);border:2px solid var(--pink);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--pink)">4</div>
+        <div style="background:rgba(255,217,61,.1);border:2px solid var(--yellow);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--yellow)">5</div>
+        <div style="background:rgba(107,203,119,.15);border:2px solid var(--green);border-radius:6px;padding:.6rem;text-align:center;font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--green)">6</div>
+      </div>
+      <p style="font-size:.75rem;color:var(--muted);margin-top:.6rem">
+        <span class="tag">grid-template-columns: repeat(3, 1fr)</span> — 6 items, 3 columnas, 2 filas automáticas.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- ══ DEMO ══ -->
+  <div id="demo" class="panel">
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--accent2)"></span>
+        Cambia los valores y observa el resultado
+      </div>
+
+      <div class="controls-row">
+        <div class="ctrl">
+          <label>columnas</label>
+          <select id="cols" onchange="updateGrid()">
+            <option value="1fr 1fr">1fr 1fr (2 iguales)</option>
+            <option value="repeat(3, 1fr)" selected>repeat(3, 1fr) (3 iguales)</option>
+            <option value="repeat(4, 1fr)">repeat(4, 1fr) (4 iguales)</option>
+            <option value="2fr 1fr">2fr 1fr (2:1)</option>
+            <option value="200px 1fr">200px 1fr (fija + flexible)</option>
+            <option value="repeat(2, 1fr)">repeat(2, 1fr) (2 iguales)</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>gap</label>
+          <select id="gridgap" onchange="updateGrid()">
+            <option value="0">0</option>
+            <option value="8px">8px</option>
+            <option value="16px" selected>16px</option>
+            <option value="24px">24px</option>
+            <option value="8px 24px">8px 24px (v h)</option>
+          </select>
+        </div>
+        <div class="ctrl">
+          <label>nº de items</label>
+          <select id="items" onchange="updateGrid()">
+            <option value="3">3 items</option>
+            <option value="4">4 items</option>
+            <option value="5">5 items</option>
+            <option value="6" selected>6 items</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="gridDemo" class="demo-grid"></div>
+
+      <div class="css-output" id="gridCSS"></div>
+    </div>
+  </div>
+
+  <!-- ══ FR ══ -->
+  <div id="fr" class="panel">
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--yellow)"></span>
+        La unidad <span class="tag" style="font-size:.85rem">fr</span> — fracción del espacio disponible
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem">
+        <strong style="color:var(--text)">fr</strong> significa "fracción". En vez de píxeles fijos, las columnas se reparten el espacio disponible proporcionalmente. Si el contenedor cambia de tamaño, las columnas se adaptan solas.
+      </p>
+
+      <div class="fr-demo">
+        <div class="fr-row">
+          <div class="fr-label">repeat(3, 1fr) — tres partes iguales</div>
+          <div class="fr-bar" style="grid-template-columns:repeat(3,1fr)">
+            <div class="fr-cell" style="background:rgba(124,106,247,.3);color:var(--accent)">1fr</div>
+            <div class="fr-cell" style="background:rgba(78,205,196,.25);color:var(--accent2)">1fr</div>
+            <div class="fr-cell" style="background:rgba(247,144,106,.25);color:var(--coral)">1fr</div>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-label">2fr 1fr — la primera ocupa el doble</div>
+          <div class="fr-bar" style="grid-template-columns:2fr 1fr">
+            <div class="fr-cell" style="background:rgba(124,106,247,.3);color:var(--accent)">2fr</div>
+            <div class="fr-cell" style="background:rgba(78,205,196,.25);color:var(--accent2)">1fr</div>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-label">1fr 2fr 1fr — la del centro más ancha</div>
+          <div class="fr-bar" style="grid-template-columns:1fr 2fr 1fr">
+            <div class="fr-cell" style="background:rgba(124,106,247,.3);color:var(--accent)">1fr</div>
+            <div class="fr-cell" style="background:rgba(247,144,106,.25);color:var(--coral)">2fr</div>
+            <div class="fr-cell" style="background:rgba(78,205,196,.25);color:var(--accent2)">1fr</div>
+          </div>
+        </div>
+        <div class="fr-row">
+          <div class="fr-label">200px 1fr — columna fija + columna flexible</div>
+          <div class="fr-bar" style="grid-template-columns:200px 1fr">
+            <div class="fr-cell" style="background:rgba(255,217,61,.15);color:var(--yellow)">200px fija</div>
+            <div class="fr-cell" style="background:rgba(107,203,119,.2);color:var(--green)">1fr flexible</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlight-box" style="margin-top:1.2rem">
+        <h4>La combinación más usada en proyectos reales</h4>
+        <div class="code-block" style="margin-top:.6rem">
+          <span class="cp">grid-template-columns</span>: <span class="cv">repeat(3, 1fr)</span>;<br>
+          <span class="cc">/* 3 columnas que se reparten el espacio — siempre iguales */</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AREAS ══ -->
+  <div id="areas" class="panel">
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--pink)"></span>
+        grid-template-areas — el layout visual
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem">
+        Con <strong style="color:var(--text)">grid-template-areas</strong> defines el layout escribiéndolo visualmente en el CSS. Lees el código y ves la página. Es la forma más legible de estructurar un layout completo.
+      </p>
+
+      <div class="areas-wrap">
+        <div>
+          <div class="code-block">
+.<span class="cp">pagina</span> {<br>
+&nbsp;&nbsp;<span class="cp">display</span>: <span class="cv">grid</span>;<br>
+&nbsp;&nbsp;<span class="cp">grid-template-areas</span>:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"header  header"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"sidebar contenido"</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="cs">"footer  footer"</span>;<br>
+&nbsp;&nbsp;<span class="cp">grid-template-columns</span>: <span class="cv">140px 1fr</span>;<br>
+&nbsp;&nbsp;<span class="cp">gap</span>: <span class="cv">8px</span>;<br>
+}<br><br>
+<span class="cp">header</span>  { <span class="cp">grid-area</span>: <span class="cv">header</span>; }<br>
+<span class="cp">aside</span>   { <span class="cp">grid-area</span>: <span class="cv">sidebar</span>; }<br>
+<span class="cp">main</span>    { <span class="cp">grid-area</span>: <span class="cv">contenido</span>; }<br>
+<span class="cp">footer</span>  { <span class="cp">grid-area</span>: <span class="cv">footer</span>; }
+          </div>
+        </div>
+
+        <div>
+          <p style="font-size:.75rem;color:var(--muted);margin-bottom:.75rem">Resultado visual:</p>
+          <div class="areas-visual">
+            <div class="area-cell a-header">header</div>
+            <div class="area-cell a-sidebar">sidebar</div>
+            <div class="area-cell a-content">contenido</div>
+            <div class="area-cell a-footer">footer</div>
+          </div>
+          <div class="highlight-box" style="margin-top:1rem">
+            <h4>Por qué impresiona en entrevista</h4>
+            <p>Lees el CSS y ves la estructura de la página al instante. Demuestra que no solo sabes Grid sino que sabes usarlo de forma <strong>profesional y mantenible</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ VS FLEXBOX ══ -->
+  <div id="vs" class="panel">
+    <div class="card">
+      <div class="section-title">
+        <span class="dot" style="background:var(--accent)"></span>
+        Grid vs Flexbox — cuándo usar cada uno
+      </div>
+      <p style="font-size:.82rem;color:var(--muted);line-height:1.65;margin-bottom:1.2rem">
+        Esta es una de las preguntas más frecuentes en entrevistas junior. No hay una respuesta de "uno es mejor que el otro" — son herramientas complementarias.
+      </p>
+
+      <div class="vs-grid">
+        <div class="vs-card" style="border-color:rgba(124,106,247,.4)">
+          <h4 style="color:var(--accent)">
+            <span class="dot" style="background:var(--accent)"></span>
+            Flexbox
+          </h4>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent)">▸</span>Una sola dirección: fila O columna</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent)">▸</span>Componentes: botones, nav, tarjetas, headers</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent)">▸</span>Centrar elementos fácilmente</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent)">▸</span>Distribuir espacio entre items en una línea</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent)">▸</span>El tamaño de los items es flexible por defecto</div>
+        </div>
+        <div class="vs-card" style="border-color:rgba(78,205,196,.4)">
+          <h4 style="color:var(--accent2)">
+            <span class="dot" style="background:var(--accent2)"></span>
+            Grid
+          </h4>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent2)">▸</span>Dos dimensiones: filas Y columnas a la vez</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent2)">▸</span>Layouts de página: header, sidebar, footer</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent2)">▸</span>Galerías, cuadrículas de tarjetas, dashboards</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent2)">▸</span>Posicionar items en ubicaciones exactas</div>
+          <div class="vs-item"><span class="vs-icon" style="color:var(--accent2)">▸</span>Estructura definida desde el contenedor</div>
+        </div>
+      </div>
+
+      <div class="highlight-box" style="margin-top:1.2rem">
+        <h4>La regla práctica para la entrevista</h4>
+        <p style="margin-bottom:.6rem">Piensas en <strong>una dirección</strong> (fila o columna) → <strong>Flexbox</strong><br>
+        Piensas en <strong>filas y columnas</strong> a la vez → <strong>Grid</strong></p>
+        <p>En la práctica se usan juntos: <strong>Grid para la estructura general de la página</strong>, <strong>Flexbox para los componentes dentro de esa estructura</strong>.</p>
+      </div>
+
+      <div style="margin-top:1.2rem">
+        <p style="font-size:.8rem;color:var(--muted);margin-bottom:.75rem;font-weight:500">Ejemplos concretos:</p>
+        <div class="concept-row">
+          <div class="concept-box">
+            <h4 style="color:var(--accent)">Usaría Flexbox para...</h4>
+            <p>Menú de navegación · Botón con icono · Fila de badges · Centrar algo en pantalla · Lista horizontal</p>
+          </div>
+          <div class="concept-box">
+            <h4 style="color:var(--accent2)">Usaría Grid para...</h4>
+            <p>Layout completo de la página · Galería de imágenes · Dashboard de tarjetas · Cualquier cosa en cuadrícula</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+function switchTab(id, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function updateGrid() {
+  const cols = document.getElementById('cols').value;
+  const gap = document.getElementById('gridgap').value;
+  const n = parseInt(document.getElementById('items').value);
+  const demo = document.getElementById('gridDemo');
+
+  demo.style.gridTemplateColumns = cols;
+  demo.style.gap = gap;
+
+  demo.innerHTML = '';
+  const labels = ['A','B','C','D','E','F'];
+  for (let i = 0; i < n; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'demo-cell';
+    cell.textContent = labels[i] || (i+1);
+    demo.appendChild(cell);
+  }
+
+  document.getElementById('gridCSS').innerHTML =
+    `<span class="cp">.contenedor</span> {\n  <span class="cp">display</span>: <span class="cv">grid</span>;\n  <span class="cp">grid-template-columns</span>: <span class="cv">${cols}</span>;\n  <span class="cp">gap</span>: <span class="cv">${gap}</span>;\n}`;
+}
+
+updateGrid();
+</script>
+</body>
+</html>
